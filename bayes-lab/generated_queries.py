@@ -1,5 +1,3 @@
-"""Query code for the three homework queries, written by Claude (not by the notebook's local
-Qwen model, which was not run). Validated against queries.py by validate_generated.py."""
 from pgmpy.models import DiscreteBayesianNetwork
 from pgmpy.factors.discrete import TabularCPD
 from pgmpy.inference import VariableElimination

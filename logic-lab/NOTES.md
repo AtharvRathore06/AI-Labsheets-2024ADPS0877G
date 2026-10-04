@@ -29,7 +29,43 @@ Drop(Package,C) is not: At(Robot,C) and Holding(Package) are both false.
 S4 satisfies G. The handout's sketch (move to B, then PickUp at B) does not work: the package stays at A, so PickUp(Package,B) is not applicable.
 
 ## Task 2 - the prompt and where the ideas appear
-Claude was asked to solve all four labs and push a repo. `planner.py` follows the handout's specification: an `Action` with positive/negative preconditions and positive/negative effects, applicability as "positive preconditions are in the state and no negative precondition is", BFS over states, "No plan found" when the queue empties, and a step-by-step state printout.
+I want to implement a simple planning agent in Python using only the standard library.
+
+REPRESENTATION
+- A state is a set of logical propositions, written as strings such as "At(Robot,A)" and "At(Package,A)".
+- Each action has: a name, positive preconditions, negative preconditions, positive effects (add list) and negative effects (delete list).
+- An action is applicable if all of its positive preconditions are in the state and none of its negative preconditions are in the state.
+- Applying an action: first remove its negative effects from the state, then add its positive effects.
+
+PLANNER
+- Use breadth-first search over states to find a sequence of actions that achieves a goal.
+- The goal is a set of propositions, and it is achieved when all of them are in the state.
+- Do not revisit states that were already seen.
+- If no plan exists, report "No plan found" instead of inventing actions or looping forever.
+- Print the plan as a list of action names, then print the state reached after each action.
+
+WAREHOUSE PROBLEM
+Locations: A, B, C. The robot can move between A-B and B-C in both directions (not directly A-C).
+- Initial state: At(Robot,A), At(Package,A)
+- Goal: At(Package,C)
+- Move(x,y): precondition At(Robot,x); effects: not At(Robot,x), At(Robot,y)
+- PickUp(Package,l): preconditions At(Robot,l) and At(Package,l); effects: not At(Package,l), Holding(Package)
+- Drop(Package,l): preconditions At(Robot,l) and Holding(Package); effects: not Holding(Package), At(Package,l)
+Generate the actions for every valid location rather than typing each one by hand.
+
+TESTS
+Write tests (assert or pytest) for these cases:
+A. The original problem returns a valid plan. Replay it step by step, checking that every action is applicable and that the final state satisfies the goal.
+B. The same problem with the PickUp action removed returns "No plan found".
+C. With PickUp removed, the goal At(Robot,C) is solvable, but the goal At(Package,C) is not (the robot reaching C is not the package reaching C).
+D. PickUp(Package,A) is not applicable when the robot is at B and the package is at A.
+E. Drop(Package,C) is not applicable in the initial state.
+
+CODE STYLE
+- Short, clear function names and brief comments. Use a small dataclass or tuple for actions.
+
+OUTPUT
+Before the code, explain the implementation and list every assumption you make (for example closed-world assumption, deterministic actions, ground facts only). After the code, show the output for the warehouse problem and point out where in the code each of these appears: preconditions, effects, goal test, and BFS.
 
 | Idea | Where |
 |---|---|
@@ -87,9 +123,3 @@ The independent check is `show()` in `planner.py`: it replays the plan, asserts 
 
 **Task 8:** wet_road is a fact; slippery :- wet_road gives slippery; reduce_speed :- slippery gives reduce_speed.
 WetRoad => (WetRoad -> Slippery) => Slippery => (Slippery -> ReduceSpeed) => ReduceSpeed, so the query succeeds.
-
-## Prolog reflection
-1. A fact states something unconditionally true (`connected(a,b).`); a rule states something true if its body is true (`slippery :- wet_road.`).
-2. A query asks whether the goal follows from the facts and rules. `true` means it can be derived; `false` means it cannot be derived from this knowledge base (not that it is necessarily false in the world).
-3. A separate verifier catches errors in the generator without sharing its mistakes, and a Prolog check of each move against the map is simple and auditable.
-4. It makes the check independent: if the LLM or the Python code is wrong, the verifier does not inherit that error. The same architecture is "generate, then independently verify".
