@@ -28,7 +28,47 @@ flowchart LR
 | Decision-making | `find_path()` (BFS) |
 
 ## Task 3 - prompt engineering
-**Prompt used (summary):** Claude was asked to solve all four lab handouts and push them as a repo, with short code comments. The handout's suggested prompt (grid as 2-D array, collision-free path, print path or a no-path message, explain the algorithm) is covered by the program below.
+**Prompt used (summary):** 
+I am building a goal-based agent in Python for a warehouse navigation problem.
+
+ENVIRONMENT
+The warehouse is this ASCII map:
+
+#####################
+#S....#............G#
+#.##....##########..#
+#....##.............#
+#.######.###.#.###..#
+#........#..........#
+
+#####################
+
+S is the start, G is the goal, # is an obstacle, and . is free space.
+The vehicle can move Up, Down, Left or Right, one cell at a time.
+It cannot move into a # cell or outside the map. Every move costs 1.
+
+REQUIREMENTS
+1. Represent the warehouse as a two-dimensional grid and find the positions of S and G by scanning the map.
+2. Represent a state as a (row, column) position.
+3. Implement a function that returns the valid neighbouring cells of a position.
+4. Find a collision-free path from S to G using a search algorithm. Choose the algorithm yourself, and explain in comments or text why it suits this problem.
+5. Avoid revisiting cells, so the search always terminates.
+6. If a path exists, print the sequence of moves (Up/Down/Left/Right), the path length, and the map with the path marked by *.
+7. If no path exists, print a clear message instead of crashing or looping.
+
+CODE STYLE
+- Plain Python 3 with the standard library only.
+- Short, clear function names and brief comments. No unnecessary classes.
+- Put the map in a variable so I can change it easily.
+
+TESTING
+After the main program, add a few simple tests (using assert or pytest) for:
+- the original map has a path,
+- a map where the goal is next to the start,
+- a map where the goal is walled off (should report no path),
+- the path never passes through a #.
+
+Before the code, state which search algorithm you chose and why. After the code, show the output on the warehouse map above.
 
 1. **Did the LLM generate a working program on the first attempt?** Yes. It ran and produced a valid path first time, and the four tests passed first time.
 2. **How could the prompt be improved?** Not needed here, but a better prompt would also ask for tests (blocked goal, adjacent goal) and say explicitly "shortest path", since that decides between BFS and DFS.
