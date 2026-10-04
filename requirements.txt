@@ -1,0 +1,4 @@
+pytest
+pgmpy>=1.0
+pandas
+numpy
